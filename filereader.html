@@ -10,7 +10,12 @@
 
 <body>
 <input type="file" name="file" id="file"/>
+<form>
+	<input class="messageCheckbox" type="checkbox" name="checkbox" id="checkbox" value="Entire File"/>
+	<label for="radio0">Send the Entire File in one transaction.</label><br>
+</form>
 
+<script src="include/jquery-3.2.1.slim.min.js"></script>
 <script src="include/web3.min.js"></script>
 
 <script>
@@ -72,20 +77,24 @@ document.getElementById('file').onchange = function(){
 	reader.onload = function(progressEvent){
 		//console.log(this.result); Entire File
 		var lines = this.result.split(/\r\n|\n/);
-		for(var line = 0; line < lines.length-1; line++){
-			if(line_count < 0){ // line_count < 0 sets the transmit mode to 1 line per transaction
-				line_count++;
-				payload = payload.concat(lines[line]+'\n');
-			} else {
-				line_count = 0;
-				payload = payload.concat(lines[line]+'\n');
-				MyContract.methods.receive_line(payload).send({from: '0x046C6923FA273Bd7A6030B55329a8a4cE28eA9A0'}).then(function(result){
-					console.log(result);
-				});
-				console.log(payload);
-				payload = "";
+		if($('.messageCheckbox:checked').val()){
+			console.log(this.result);
+		} else {
+			for(var line = 0; line < lines.length-1; line++){
+				if(line_count < 0){ // line_count < 0 sets the transmit mode to 1 line per transaction
+					line_count++;
+					payload = payload.concat(lines[line]+'\n');
+				} else {
+					line_count = 0;
+					payload = payload.concat(lines[line]+'\n');
+					MyContract.methods.receive_line(payload).send({from: '0x046C6923FA273Bd7A6030B55329a8a4cE28eA9A0'}).then(function(result){
+						console.log(result);
+					});
+					console.log(payload);
+					payload = "";
+				}
 			}
-		}
+		} 
 	};
 	reader.readAsText(file);
 };
