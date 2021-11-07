@@ -11,18 +11,79 @@
 <body>
 <input type="file" name="file" id="file"/>
 
+<script src="include/web3.min.js"></script>
+
 <script>
+if(typeof web3 != 'undefined'){
+	web3 = new Web3(web3.currentProvider);
+} else {
+	//web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+	web3 = new Web3(new Web3.providers.WebsocketProvider("ws://192.168.1.42:8545"));
+}
+
+web3.eth.defaultAccount = web3.eth.accounts[0];
+
+var MyContract = new web3.eth.Contract([
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "delete_log_file",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "line",
+				"type": "string"
+			}
+		],
+		"name": "receive_line",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "send_log_file",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+], '0xA8C3A7A01C295730403f85d01D2e253DD8b9598e');
+
 document.getElementById('file').onchange = function(){
+	var payload = "";
+	var line_count = 0;
 	var file = this.files[0];
 	var reader = new FileReader();
 	reader.onload = function(progressEvent){
 		//console.log(this.result); Entire File
 		var lines = this.result.split(/\r\n|\n/);
 		for(var line = 0; line < lines.length-1; line++){
-			if(lines[line] != '\n'){
-				console.log(line + " --> "+ lines[line]);
+			if(line_count < 0){ // line_count < 0 sets the transmit mode to 1 line per transaction
+				line_count++;
+				payload = payload.concat(lines[line]+'\n');
 			} else {
-				continue;
+				line_count = 0;
+				payload = payload.concat(lines[line]+'\n');
+				MyContract.methods.receive_line(payload).send({from: '0x046C6923FA273Bd7A6030B55329a8a4cE28eA9A0'}).then(function(result){
+					console.log(result);
+				});
+				console.log(payload);
+				payload = "";
 			}
 		}
 	};
