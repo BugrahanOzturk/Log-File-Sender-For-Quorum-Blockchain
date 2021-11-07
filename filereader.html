@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Log File Reader</title>
+</head>
+
+<body>
+<input type="file" name="file" id="file"/>
+
+<script>
+document.getElementById('file').onchange = function(){
+	var file = this.files[0];
+	var reader = new FileReader();
+	reader.onload = function(progressEvent){
+		//console.log(this.result); Entire File
+		var lines = this.result.split(/\r\n|\n/);
+		for(var line = 0; line < lines.length-1; line++){
+			if(lines[line] != '\n'){
+				console.log(line + " --> "+ lines[line]);
+			} else {
+				continue;
+			}
+		}
+	};
+	reader.readAsText(file);
+};
+
+
+</script>
+
+</body>
+
+</html>
+
