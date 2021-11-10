@@ -15,15 +15,20 @@
 	<label for="radio0">Send the Entire File in one transaction.</label><br>
 </form>
 
-<script src="include/jquery-3.2.1.slim.min.js"></script>
+<div class "container">
+	<button id="buttonv1">Return the text file</button>
+	<button id="buttonv2">Delete the stored logfile</button>
+</div>
+
 <script src="include/web3.min.js"></script>
+<script src="include/jquery.slim.min.js"></script>
 
 <script>
 if(typeof web3 != 'undefined'){
 	web3 = new Web3(web3.currentProvider);
 } else {
-	//web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-	web3 = new Web3(new Web3.providers.WebsocketProvider("ws://192.168.1.42:8545"));
+	web3 = new Web3(new Web3.providers.HttpProvider("http://192.168.1.43:8545"));
+	//web3 = new Web3(new Web3.providers.WebsocketProvider("ws://192.168.1.43:8545"));
 }
 
 web3.eth.defaultAccount = web3.eth.accounts[0];
@@ -67,7 +72,21 @@ var MyContract = new web3.eth.Contract([
 		"stateMutability": "view",
 		"type": "function"
 	}
-], '0xA8C3A7A01C295730403f85d01D2e253DD8b9598e');
+], '0x76F8D921B70b50C6d6473b52549C9Ee9B7Edff4E');
+
+$("#buttonv1").click(function(){
+	MyContract.methods.send_log_file().call().then(function(result){
+		console.log(result);
+	}).catch(function(error){
+		console.log(error.message);
+	});
+});
+
+$("#buttonv2").click(function(){
+	MyContract.methods.delete_log_file().send({from: '0x0784799AdC872B9004Bdcf9Ca3fDfb5EcFf699e3'}).then(function(result){
+		console.log(result);
+	});
+});
 
 document.getElementById('file').onchange = function(){
 	var payload = "";
@@ -87,7 +106,7 @@ document.getElementById('file').onchange = function(){
 				} else {
 					line_count = 0;
 					payload = payload.concat(lines[line]+'\n');
-					MyContract.methods.receive_line(payload).send({from: '0x046C6923FA273Bd7A6030B55329a8a4cE28eA9A0'}).then(function(result){
+					MyContract.methods.receive_line(payload).send({from: '0x0784799AdC872B9004Bdcf9Ca3fDfb5EcFf699e3'}).then(function(result){
 						console.log(result);
 					});
 					console.log(payload);
@@ -98,7 +117,6 @@ document.getElementById('file').onchange = function(){
 	};
 	reader.readAsText(file);
 };
-
 
 </script>
 

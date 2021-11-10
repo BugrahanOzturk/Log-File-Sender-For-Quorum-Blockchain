@@ -6,7 +6,7 @@ pragma solidity ^0.8.7;
 
 contract LogReceiver{
     
-    address owner; // Address of the owner
+    address owner; // Address of the IoT Controller
     string logfile;
     
     modifier onlySender {
@@ -29,7 +29,7 @@ contract LogReceiver{
         return logfile;
     }
     
-    function delete_log_file() public payable onlySender{
+    function delete_log_file() public payable{
         logfile = "";
     }
 }
