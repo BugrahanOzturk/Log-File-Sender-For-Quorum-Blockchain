@@ -1,8 +1,4 @@
-// Author    : Bugrahan OZTURK
-// Project   : Log File Storage Program for Quorum Blockchain
-// Date      : 06.11.2021
-
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.10;
 
 contract LogReceiver{
     

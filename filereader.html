@@ -27,7 +27,7 @@
 if(typeof web3 != 'undefined'){
 	web3 = new Web3(web3.currentProvider);
 } else {
-	web3 = new Web3(new Web3.providers.HttpProvider("http://192.168.1.43:8545"));
+	web3 = new Web3(new Web3.providers.HttpProvider("http://10.50.0.2:22000"));
 	//web3 = new Web3(new Web3.providers.WebsocketProvider("ws://192.168.1.43:8545"));
 }
 
@@ -72,7 +72,7 @@ var MyContract = new web3.eth.Contract([
 		"stateMutability": "view",
 		"type": "function"
 	}
-], '0x76F8D921B70b50C6d6473b52549C9Ee9B7Edff4E');
+], '0x21b163add13b630af74fb6c75fe45115db8c3a70');
 
 $("#buttonv1").click(function(){
 	MyContract.methods.send_log_file().call().then(function(result){
@@ -83,7 +83,7 @@ $("#buttonv1").click(function(){
 });
 
 $("#buttonv2").click(function(){
-	MyContract.methods.delete_log_file().send({from: '0x0784799AdC872B9004Bdcf9Ca3fDfb5EcFf699e3'}).then(function(result){
+	MyContract.methods.delete_log_file().send({from: '0xB59464688E9FFfa7A66F50446F2a0cB9e452CedE'}).then(function(result){
 		console.log(result);
 	});
 });
@@ -106,7 +106,7 @@ document.getElementById('file').onchange = function(){
 				} else {
 					line_count = 0;
 					payload = payload.concat(lines[line]+'\n');
-					MyContract.methods.receive_line(payload).send({from: '0x0784799AdC872B9004Bdcf9Ca3fDfb5EcFf699e3'}).then(function(result){
+					MyContract.methods.receive_line(payload).send({from: '0xB59464688E9FFfa7A66F50446F2a0cB9e452CedE'}).then(function(result){
 						console.log(result);
 					});
 					console.log(payload);
