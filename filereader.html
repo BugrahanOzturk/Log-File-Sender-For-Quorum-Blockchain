@@ -17,7 +17,7 @@
 
 <div class "container">
 	<button id="buttonv1">Return the text file</button>
-	<button id="buttonv2">Delete the stored logfile</button>
+	<button id="buttonv2">Delete the stored text file</button>
 </div>
 
 <script src="include/web3.min.js"></script>
@@ -33,60 +33,10 @@ if(typeof web3 != 'undefined'){
 
 web3.eth.defaultAccount = web3.eth.accounts[0];
 
-var MyContract = new web3.eth.Contract([
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [],
-		"name": "delete_log_file",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "line",
-				"type": "string"
-			}
-		],
-		"name": "receive_line",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "send_log_file",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-], '0x21b163add13b630af74fb6c75fe45115db8c3a70');
+var MyContract = new web3.eth.Contract([{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"delete_log_file","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"string","name":"line","type":"string"}],"name":"receive_line","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"send_log_file","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}], 
+'0x613cd1b3b1a5381ff0e390313e257d8c95698802');
 
-$("#buttonv1").click(function(){
-	MyContract.methods.send_log_file().call().then(function(result){
-		console.log(result);
-	}).catch(function(error){
-		console.log(error.message);
-	});
-});
-
-$("#buttonv2").click(function(){
-	MyContract.methods.delete_log_file().send({from: '0xB59464688E9FFfa7A66F50446F2a0cB9e452CedE'}).then(function(result){
-		console.log(result);
-	});
-});
+var tx_account = "0xFDE1aD0e810b95BF8441584169cc91d6b5133E5B";
 
 document.getElementById('file').onchange = function(){
 	var payload = "";
@@ -98,15 +48,21 @@ document.getElementById('file').onchange = function(){
 		var lines = this.result.split(/\r\n|\n/);
 		if($('.messageCheckbox:checked').val()){
 			console.log(this.result);
+			MyContract.methods.receive_line("dummy_line").send({from: tx_account}).then(function(result){
+				console.log(result);
+			}); //Sending dummy transaction to measure the timestamp
+			MyContract.methods.receive_line(this.result).send({from: tx_account}).then(function(result){
+				console.log(result);
+			});
 		} else {
 			for(var line = 0; line < lines.length-1; line++){
-				if(line_count < 0){ // line_count < 0 sets the transmit mode to 1 line per transaction
+				if(line_count < 4){ // line_count < 0 sets the transmit mode to 1 line per transaction
 					line_count++;
 					payload = payload.concat(lines[line]+'\n');
 				} else {
 					line_count = 0;
 					payload = payload.concat(lines[line]+'\n');
-					MyContract.methods.receive_line(payload).send({from: '0xB59464688E9FFfa7A66F50446F2a0cB9e452CedE'}).then(function(result){
+					MyContract.methods.receive_line(payload).send({from: tx_account}).then(function(result){
 						console.log(result);
 					});
 					console.log(payload);
@@ -117,6 +73,18 @@ document.getElementById('file').onchange = function(){
 	};
 	reader.readAsText(file);
 };
+
+$("#buttonv1").click(function(){
+	MyContract.methods.send_log_file().call({from: tx_account}, function(error, result){
+		console.log(result);
+	});
+});
+
+$("#buttonv2").click(function(){
+	MyContract.methods.delete_log_file().send({from: tx_account}).then(function(result){
+		console.log(result);
+	});
+});
 
 </script>
 

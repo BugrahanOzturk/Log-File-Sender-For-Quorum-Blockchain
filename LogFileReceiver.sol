@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.7.5;
 
 contract LogReceiver{
     
@@ -21,7 +21,7 @@ contract LogReceiver{
        logfile = string(abi.encodePacked(logfile, line));
    }
 
-    function send_log_file() public view returns (string memory){
+    function send_log_file() external view returns (string memory){
         return logfile;
     }
     
