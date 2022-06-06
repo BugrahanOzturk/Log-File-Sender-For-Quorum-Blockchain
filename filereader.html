@@ -33,8 +33,60 @@ if(typeof web3 != 'undefined'){
 
 web3.eth.defaultAccount = web3.eth.accounts[0];
 
-var MyContract = new web3.eth.Contract([{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"delete_log_file","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"string","name":"line","type":"string"}],"name":"receive_line","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"send_log_file","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}], 
-'0x613cd1b3b1a5381ff0e390313e257d8c95698802');
+var MyContract = new web3.eth.Contract([
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "delete_log_file",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "logfile",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "line",
+				"type": "string"
+			}
+		],
+		"name": "receive_line",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "send_log_file",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+], 
+'0xa6c09e8a5a6ec7674b963e7d5ad4120e849110d2');
 
 var tx_account = "0xFDE1aD0e810b95BF8441584169cc91d6b5133E5B";
 
@@ -56,7 +108,7 @@ document.getElementById('file').onchange = function(){
 			});
 		} else {
 			for(var line = 0; line < lines.length-1; line++){
-				if(line_count < 4){ // line_count < 0 sets the transmit mode to 1 line per transaction
+				if(line_count < 0){ // line_count < 0 sets the transmit mode to 1 line per transaction
 					line_count++;
 					payload = payload.concat(lines[line]+'\n');
 				} else {
